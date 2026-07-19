@@ -1,0 +1,78 @@
+services:
+
+  api:
+    image: albinberisha0/future-api
+    container_name: future-api
+    restart: unless-stopped
+
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
+      JWT_SECRET: ${JWT_SECRET}
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+      AWS_S3_REGION: ${AWS_S3_REGION}
+      FTP_HOST: ${FTP_HOST}
+      FTP_PORT: ${FTP_PORT}
+      FTP_USERNAME: ${FTP_USERNAME}
+      FTP_PASSWORD: ${FTP_PASSWORD}
+      STORAGE_PROVIDER: ${STORAGE_PROVIDER}
+      SERVER_PORT: ${API_PORT}
+
+    ports:
+      - "${API_PORT}:${API_PORT}"
+
+    # networks:
+    #   - future-network
+
+
+  admin:
+    image: albinberisha0/future-admin
+    container_name: future-admin
+    restart: unless-stopped
+
+    depends_on:
+      - api
+
+    # nginx reverse-proxies /api to API_UPSTREAM. Defaults to the compose `api`
+    # service; override in .env to point at a different backend host/port.
+    environment:
+      API_UPSTREAM: ${API_UPSTREAM:-http://api:8085}
+
+    ports:
+      - "${ADMIN_APP_PORT}:80"
+
+    # networks:
+    #   - future-network
+
+
+  # store:
+
+  #   container_name: future-store
+  #   restart: unless-stopped
+
+  #   depends_on:
+  #     - api
+
+  #   environment:
+  #     REACT_APP_API_URL: http://localhost:8080
+
+  #   ports:
+  #     - "3000:80"
+
+  #   networks:
+  #     - app-network
+
+
+# volumes:
+#   mysql-data:
+
+
+# networks:
+#   future-network:
+#     driver: bridge

@@ -1,0 +1,15 @@
+# Environment files contain secrets — keep them local and never commit them.
+# .env.example is the committed template (re-included just below).
+.env
+.env.*
+!.env.example
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Logs
+*.log
